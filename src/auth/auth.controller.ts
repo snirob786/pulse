@@ -8,7 +8,6 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
-    console.log('Register endpoint hit');
     return await this.authService.register(registerDto);
   }
 
