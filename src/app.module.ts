@@ -8,6 +8,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformInterceptor } from './common/transform.interceptor';
 import { JwtModule } from '@nestjs/jwt';
 import { EncryptionService } from './common/encryption.service';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { EncryptionService } from './common/encryption.service';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
     }),
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [

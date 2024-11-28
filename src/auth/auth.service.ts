@@ -39,24 +39,30 @@ export class AuthService {
   }
 
   async login(data: { email: string; password: string }) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: data.email },
-    });
+    try {
+      console.log('🚀 ~ AuthService ~ login ~ data:', data.email);
+      const user = await this.prisma.user.findUnique({
+        where: { email: data.email },
+      });
 
-    if (!user || !(await bcrypt.compare(data.password, user.password))) {
-      throw new BadRequestException('Invalid credentials.');
+      if (!user || !(await bcrypt.compare(data.password, user.password))) {
+        throw new BadRequestException('Invalid credentials.');
+      }
+
+      // Generate JWT payload
+      const payload = { name: user.name, email: user.email, sub: user.id };
+      const token = this.jwtService.sign(payload);
+
+      return {
+        message: 'User logged in successfully.',
+        data: {
+          accessToken: token,
+          user: { id: user.id, email: user.email, name: user.name },
+        },
+      };
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      throw new BadRequestException('Error fetching user');
     }
-
-    // Generate JWT payload
-    const payload = { name: user.name, email: user.email, sub: user.id };
-    const token = this.jwtService.sign(payload);
-
-    return {
-      message: 'User logged in successfully.',
-      data: {
-        accessToken: token,
-        user: { id: user.id, email: user.email, name: user.name },
-      },
-    };
   }
 }
