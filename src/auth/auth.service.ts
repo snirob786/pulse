@@ -32,7 +32,9 @@ export class AuthService {
 
     return {
       message: 'User registered successfully',
-      user: { id: newUser.id, email: newUser.email, name: newUser.name },
+      data: {
+        user: { id: newUser.id, email: newUser.email, name: newUser.name },
+      },
     };
   }
 
@@ -49,6 +51,12 @@ export class AuthService {
     const payload = { name: user.name, email: user.email, sub: user.id };
     const token = this.jwtService.sign(payload);
 
-    return { message: 'Login successful', access_token: token };
+    return {
+      message: 'User logged in successfully.',
+      data: {
+        accessToken: token,
+        user: { id: user.id, email: user.email, name: user.name },
+      },
+    };
   }
 }

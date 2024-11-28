@@ -6,7 +6,11 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getHello() {
+    let res = this.appService.getHello();
+    return {
+      message: 'This is backend home route of Pharmacy POS.',
+      data: res,
+    };
   }
 }
