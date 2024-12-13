@@ -29,10 +29,10 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
+      console.log('🚀 ~ AuthGuard ~ token:', process.env.JWT_SECRET);
       // Extract and verify JWT
-      const decoded = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET, // Ensure this matches your app's configuration
-      });
+      const decoded = this.jwtService.verify(token);
+      console.log('🚀 ~ AuthGuard ~ decoded:', decoded);
       //   const decoded = this.jwtService.verify(token.replace('Bearer ', ''));
 
       const { role, sub, iat }: any = decoded as JwtPayload;
