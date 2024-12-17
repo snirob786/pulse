@@ -7,6 +7,7 @@ export class AppController {
 
   @Get()
   getHello() {
+    console.log('testing home controller');
     let res = this.appService.getHello();
     return {
       message: 'This is backend home route of Pharmacy POS.',
