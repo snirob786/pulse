@@ -9,11 +9,13 @@ import { TransformInterceptor } from './common/transform.interceptor';
 import { JwtModule } from '@nestjs/jwt';
 import { EncryptionService } from './common/encryption.service';
 import { MessageModule } from './message/message.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
   imports: [
     UserModule,
     AuthModule,
+    ConversationModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },

@@ -24,6 +24,7 @@ export class TransformInterceptor<T>
     private readonly jwtService: JwtService,
     private readonly encryptionService: EncryptionService,
   ) {}
+
   intercept(
     context: ExecutionContext,
     next: CallHandler,
@@ -33,33 +34,36 @@ export class TransformInterceptor<T>
     return next.handle().pipe(
       map((data: any) => {
         let payload: any = {};
-        if (Array.isArray(data?.data)) {
+        let token: string | undefined;
+
+        console.log('🚀 ~ map ~ typeof data:', Array.isArray(data));
+        if (Array.isArray(data)) {
+          console.log('payload used 2');
           payload = {
-            list: data.data.map((item: any) => ({
-              ...item,
-              id: item.id,
-              createdAt: item.createdAt?.toISOString(),
-              updatedAt: item.updatedAt?.toISOString(),
-            })),
+            list: data,
           };
-        } else if (typeof data?.data === 'object') {
-          payload = {
-            ...data.data,
-            id: data.data.id,
-            createdAt: data.data.createdAt?.toISOString(),
-            updatedAt: data.data.updatedAt?.toISOString(),
-          };
+        } else if (typeof data === 'object') {
+          // If the data contains a token, exclude it from encryption
+          console.log('payload used 1');
+          token = data.token;
+          payload = data;
         } else {
-          payload = data?.data;
+          console.log('payload used 3');
+          payload = data;
         }
-        let result: string = this.encryptionService.encrypt(payload);
+        console.log('🚀 ~ map ~ payload:', payload);
+
+        let encryptedPayload = this.encryptionService.encrypt(payload);
+        console.log('🚀 ~ map ~ encryptedPayload:', encryptedPayload);
+
+        // Attach the token back to the response (if applicable)
 
         // Attach default response structure
         return {
           statusCode: response.statusCode || 200,
           success: true,
           message: data?.message || 'Request processed successfully',
-          body: result,
+          body: encryptedPayload, // Encrypt the payload, keep token plain
         };
       }),
     );

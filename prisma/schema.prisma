@@ -13,33 +13,32 @@ datasource db {
 }
 
 model User {
-  id                Int      @id @default(autoincrement())
-  email             String   @unique
+  id                Int          @id @default(autoincrement())
+  email             String       @unique
   name              String
   password          String
-  conversations     Conversation[]   @relation("ParticipantConversations")
-  messagesSent      Message[]          
-  createdAt         DateTime @default(now())
+  conversations     Conversation[] @relation("ParticipantConversations")
+  messages          Message[]     @relation("UserMessages") // Relation to Message model
+  createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
- 
 }
 
 model Conversation {
-  id                String   @id @default(uuid())
-  participants      User[]  @relation("ParticipantConversations")
-  messages          Message[]
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id           String       @id @default(uuid())
+  participants User[]       @relation("ParticipantConversations")
+  messages     Message[]    @relation("ConversationMessages")
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 }
 
 model Message {
-  id                String       @id @default(uuid())
-  conversationId    String       @map("conversation_id")
-  conversation      Conversation @relation(fields: [conversationId], references: [id])
-  senderId          Int          @map("sender_id")
-  sender            User         @relation(fields: [senderId], references: [id])
-  content           String
-  type              String       @default("TEXT")
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  id             String       @id @default(uuid())
+  conversationId String
+  content        String
+  senderId       Int
+  type           String       @default("TEXT")
+  createdAt      DateTime     @default(now())
+  
+  conversation   Conversation @relation("ConversationMessages", fields: [conversationId], references: [id])
+  sender         User         @relation("UserMessages", fields: [senderId], references: [id]) // Relation to User
 }
